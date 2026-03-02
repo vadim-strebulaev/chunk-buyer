@@ -1,6 +1,7 @@
 package ru.vadim.chunkbuyer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,6 @@ class ClaimServiceTest {
         ClaimService.BuyResult result = service.buyChunk(player, chunkId);
 
         assertEquals(ClaimService.BuyResult.INSUFFICIENT_FUNDS, result);
-        assertEquals(null, service.getOwner(chunkId));
+        assertNull(service.getOwner(chunkId));
     }
 }
