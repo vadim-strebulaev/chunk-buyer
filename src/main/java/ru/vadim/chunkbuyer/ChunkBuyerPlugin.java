@@ -60,10 +60,14 @@ public class ChunkBuyerPlugin extends JavaPlugin {
                     if (parts.length != 2) {
                         continue;
                     }
-                    int x = Integer.parseInt(parts[0]);
-                    int z = Integer.parseInt(parts[1]);
-                    UUID owner = UUID.fromString(worldSection.getString(chunkKey, ""));
-                    claimService.setClaim(new ChunkId(world, x, z), owner);
+                    try {
+                        int x = Integer.parseInt(parts[0]);
+                        int z = Integer.parseInt(parts[1]);
+                        UUID owner = UUID.fromString(worldSection.getString(chunkKey, ""));
+                        claimService.setClaim(new ChunkId(world, x, z), owner);
+                    } catch (IllegalArgumentException ignored) {
+                        // skip invalid entry
+                    }
                 }
             }
         }
@@ -80,13 +84,17 @@ public class ChunkBuyerPlugin extends JavaPlugin {
                     if (parts.length != 2) {
                         continue;
                     }
-                    int x = Integer.parseInt(parts[0]);
-                    int z = Integer.parseInt(parts[1]);
-                    Set<UUID> chunkMembers = new HashSet<>();
-                    for (String value : worldSection.getStringList(chunkKey)) {
-                        chunkMembers.add(UUID.fromString(value));
+                    try {
+                        int x = Integer.parseInt(parts[0]);
+                        int z = Integer.parseInt(parts[1]);
+                        Set<UUID> chunkMembers = new HashSet<>();
+                        for (String value : worldSection.getStringList(chunkKey)) {
+                            chunkMembers.add(UUID.fromString(value));
+                        }
+                        claimService.setMembers(new ChunkId(world, x, z), chunkMembers);
+                    } catch (IllegalArgumentException ignored) {
+                        // skip invalid entry
                     }
-                    claimService.setMembers(new ChunkId(world, x, z), chunkMembers);
                 }
             }
         }

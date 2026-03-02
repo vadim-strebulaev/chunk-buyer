@@ -91,7 +91,7 @@ public class ClaimProtectionListener implements Listener {
         if (type == Material.ENDER_CHEST || type == Material.CRAFTING_TABLE || type == Material.ENCHANTING_TABLE) {
             return true;
         }
-        if (type.name().contains("ANVIL")) {
+        if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL) {
             return false;
         }
         return !(block.getState() instanceof Container);
