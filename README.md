@@ -24,3 +24,13 @@ chunk-price: 100.0
 mvn test
 mvn package
 ```
+
+## Что делать с этим PR
+1. Открой PR и проверь изменения файлов (`README.md`, `pom.xml`, `src/...`).
+2. Локально собери проект:
+   ```bash
+   mvn package
+   ```
+3. Скопируй собранный JAR в папку `plugins` Paper/Spigot-сервера и перезапусти сервер.
+4. Проверь команды `/chunkbuyer buy`, `/chunkbuyer info`, `/chunkbuyer balance`.
+5. Если всё подходит — нажми **Merge**. Если не подходит — оставь комментарии в PR или закрой его.
