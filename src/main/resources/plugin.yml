@@ -1,0 +1,13 @@
+name: ChunkBuyer
+version: 1.0.0
+main: ru.vadim.chunkbuyer.ChunkBuyerPlugin
+api-version: '1.20'
+authors: [vadim-strebulaev]
+commands:
+  chunkbuyer:
+    description: Chunk purchase and protection commands
+    usage: /chunkbuyer <buy|unclaim|info|balance|give>
+    aliases: [cb]
+permissions:
+  chunkbuyer.admin:
+    default: op
