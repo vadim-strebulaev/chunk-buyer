@@ -196,11 +196,11 @@ public class ChunkCommand implements CommandExecutor, TabCompleter {
         int y = Math.max(minY, Math.min(maxY - 1, player.getLocation().getBlockY() + 1));
         for (int offset = 0; offset <= 16; offset += 16) {
             double x = baseX + offset;
-            world.spawnParticle(Particle.VILLAGER_HAPPY, x, y, baseZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-            world.spawnParticle(Particle.VILLAGER_HAPPY, x, y, baseZ + 16.0D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle(Particle.END_ROD, x, y, baseZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle(Particle.END_ROD, x, y, baseZ + 16.0D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             double z = baseZ + offset;
-            world.spawnParticle(Particle.VILLAGER_HAPPY, baseX, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
-            world.spawnParticle(Particle.VILLAGER_HAPPY, baseX + 16.0D, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle(Particle.END_ROD, baseX, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle(Particle.END_ROD, baseX + 16.0D, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
     }
 

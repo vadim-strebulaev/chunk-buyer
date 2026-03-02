@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ClaimProtectionListener implements Listener {
@@ -53,6 +54,15 @@ public class ClaimProtectionListener implements Listener {
         }
         event.setCancelled(true);
         event.getPlayer().sendMessage("This is чужой приват.");
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+        Block placedBlock = event.getBlockClicked().getRelative(event.getBlockFace());
+        if (!claimService.canModify(event.getPlayer().getUniqueId(), toChunkId(placedBlock))) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage("This is чужой приват.");
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
