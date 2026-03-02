@@ -34,7 +34,10 @@ public class ChunkCommand implements CommandExecutor, TabCompleter {
         }
 
         String subcommand = args[0].toLowerCase();
-        if ("give".equals(subcommand) || "explosions".equals(subcommand)) {
+        if ("explosions".equals(subcommand)) {
+            return handleExplosions(sender, args);
+        }
+        if ("give".equals(subcommand)) {
             return handleGive(sender, args);
         }
 
@@ -116,9 +119,6 @@ public class ChunkCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean handleGive(CommandSender sender, String[] args) {
-        if ("explosions".equals(args[0].toLowerCase())) {
-            return handleExplosions(sender, args);
-        }
         if (!sender.hasPermission("chunkbuyer.admin")) {
             sender.sendMessage("No permission.");
             return true;
