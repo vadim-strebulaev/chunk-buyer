@@ -58,6 +58,9 @@ public class ClaimProtectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+        if (event.getBlockClicked() == null) {
+            return;
+        }
         Block placedBlock = event.getBlockClicked().getRelative(event.getBlockFace());
         if (!claimService.canModify(event.getPlayer().getUniqueId(), toChunkId(placedBlock))) {
             event.setCancelled(true);
