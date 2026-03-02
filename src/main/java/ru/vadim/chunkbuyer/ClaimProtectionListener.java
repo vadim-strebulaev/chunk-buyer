@@ -48,6 +48,9 @@ public class ClaimProtectionListener implements Listener {
     }
 
     private void filterExplosionBlocks(Iterator<Block> iterator, UUID actor) {
+        if (claimService.isExplosionDamageEnabled()) {
+            return;
+        }
         while (iterator.hasNext()) {
             Block block = iterator.next();
             UUID owner = claimService.getOwner(toChunkId(block));

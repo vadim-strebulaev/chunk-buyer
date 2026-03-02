@@ -1,7 +1,9 @@
 package ru.vadim.chunkbuyer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -48,5 +50,43 @@ class ClaimServiceTest {
 
         assertEquals(ClaimService.BuyResult.INSUFFICIENT_FUNDS, result);
         assertNull(service.getOwner(chunkId));
+    }
+
+    @Test
+    void addMemberAllowsModifyInOwnedClaim() {
+        ClaimService service = new ClaimService(100.0D);
+        UUID owner = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        ChunkId chunkId = new ChunkId("world", 4, 8);
+        service.setClaim(chunkId, owner);
+
+        ClaimService.AddMemberResult result = service.addMember(owner, chunkId, member);
+
+        assertEquals(ClaimService.AddMemberResult.SUCCESS, result);
+        assertTrue(service.canModify(member, chunkId));
+    }
+
+    @Test
+    void addMemberFailsWhenCallerIsNotOwner() {
+        ClaimService service = new ClaimService(100.0D);
+        UUID owner = UUID.randomUUID();
+        UUID notOwner = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        ChunkId chunkId = new ChunkId("world", 4, 8);
+        service.setClaim(chunkId, owner);
+
+        ClaimService.AddMemberResult result = service.addMember(notOwner, chunkId, member);
+
+        assertEquals(ClaimService.AddMemberResult.NOT_OWNER, result);
+        assertFalse(service.canModify(member, chunkId));
+    }
+
+    @Test
+    void explosionDamageToggleCanBeChanged() {
+        ClaimService service = new ClaimService(100.0D);
+
+        assertFalse(service.isExplosionDamageEnabled());
+        service.setExplosionDamageEnabled(true);
+        assertTrue(service.isExplosionDamageEnabled());
     }
 }

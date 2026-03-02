@@ -2,7 +2,9 @@ package ru.vadim.chunkbuyer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -65,6 +67,31 @@ public class ChunkBuyerPlugin extends JavaPlugin {
                 }
             }
         }
+
+        ConfigurationSection membersSection = data.getConfigurationSection("members");
+        if (membersSection != null) {
+            for (String world : membersSection.getKeys(false)) {
+                ConfigurationSection worldSection = membersSection.getConfigurationSection(world);
+                if (worldSection == null) {
+                    continue;
+                }
+                for (String chunkKey : worldSection.getKeys(false)) {
+                    String[] parts = chunkKey.split(":");
+                    if (parts.length != 2) {
+                        continue;
+                    }
+                    int x = Integer.parseInt(parts[0]);
+                    int z = Integer.parseInt(parts[1]);
+                    Set<UUID> chunkMembers = new HashSet<>();
+                    for (String value : worldSection.getStringList(chunkKey)) {
+                        chunkMembers.add(UUID.fromString(value));
+                    }
+                    claimService.setMembers(new ChunkId(world, x, z), chunkMembers);
+                }
+            }
+        }
+
+        claimService.setExplosionDamageEnabled(data.getBoolean("explosion-damage-enabled", false));
     }
 
     private void saveData() {
@@ -83,6 +110,15 @@ public class ChunkBuyerPlugin extends JavaPlugin {
             ChunkId id = entry.getKey();
             data.set("claims." + id.world() + "." + id.x() + ":" + id.z(), entry.getValue().toString());
         }
+
+        for (Map.Entry<ChunkId, Set<UUID>> entry : claimService.getMembersSnapshot().entrySet()) {
+            ChunkId id = entry.getKey();
+            data.set(
+                    "members." + id.world() + "." + id.x() + ":" + id.z(),
+                    entry.getValue().stream().map(UUID::toString).toList());
+        }
+
+        data.set("explosion-damage-enabled", claimService.isExplosionDamageEnabled());
 
         try {
             data.save(file);
