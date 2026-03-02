@@ -6,7 +6,7 @@ authors: [vadim-strebulaev]
 commands:
   chunkbuyer:
     description: Chunk purchase and protection commands
-    usage: /chunkbuyer <buy|unclaim|info|balance|give>
+    usage: /chunkbuyer <buy|unclaim|info|balance|give|addmember|explosions|borders>
     aliases: [cb]
 permissions:
   chunkbuyer.admin:

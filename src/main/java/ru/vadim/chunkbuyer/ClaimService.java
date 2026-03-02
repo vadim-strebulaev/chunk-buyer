@@ -1,7 +1,9 @@
 package ru.vadim.chunkbuyer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class ClaimService {
@@ -11,9 +13,18 @@ public class ClaimService {
         INSUFFICIENT_FUNDS
     }
 
+    public enum AddMemberResult {
+        SUCCESS,
+        UNCLAIMED,
+        NOT_OWNER,
+        SELF
+    }
+
     private final double chunkPrice;
     private final Map<ChunkId, UUID> claims = new HashMap<>();
+    private final Map<ChunkId, Set<UUID>> members = new HashMap<>();
     private final Map<UUID, Double> balances = new HashMap<>();
+    private boolean explosionDamageEnabled;
 
     public ClaimService(double chunkPrice) {
         this.chunkPrice = chunkPrice;
@@ -63,6 +74,7 @@ public class ClaimService {
             return false;
         }
         claims.remove(chunkId);
+        members.remove(chunkId);
         return true;
     }
 
@@ -72,11 +84,23 @@ public class ClaimService {
 
     public boolean canModify(UUID playerId, ChunkId chunkId) {
         UUID owner = claims.get(chunkId);
-        return owner == null || owner.equals(playerId);
+        if (owner == null || owner.equals(playerId)) {
+            return true;
+        }
+        Set<UUID> chunkMembers = members.get(chunkId);
+        return chunkMembers != null && chunkMembers.contains(playerId);
     }
 
     public Map<ChunkId, UUID> getClaimsSnapshot() {
         return new HashMap<>(claims);
+    }
+
+    public Map<ChunkId, Set<UUID>> getMembersSnapshot() {
+        Map<ChunkId, Set<UUID>> snapshot = new HashMap<>();
+        for (Map.Entry<ChunkId, Set<UUID>> entry : members.entrySet()) {
+            snapshot.put(entry.getKey(), new HashSet<>(entry.getValue()));
+        }
+        return snapshot;
     }
 
     public Map<UUID, Double> getBalancesSnapshot() {
@@ -85,5 +109,36 @@ public class ClaimService {
 
     public void setClaim(ChunkId chunkId, UUID playerId) {
         claims.put(chunkId, playerId);
+    }
+
+    public void setMembers(ChunkId chunkId, Set<UUID> chunkMembers) {
+        if (chunkMembers == null || chunkMembers.isEmpty()) {
+            members.remove(chunkId);
+            return;
+        }
+        members.put(chunkId, new HashSet<>(chunkMembers));
+    }
+
+    public AddMemberResult addMember(UUID ownerId, ChunkId chunkId, UUID memberId) {
+        UUID owner = claims.get(chunkId);
+        if (owner == null) {
+            return AddMemberResult.UNCLAIMED;
+        }
+        if (!owner.equals(ownerId)) {
+            return AddMemberResult.NOT_OWNER;
+        }
+        if (owner.equals(memberId)) {
+            return AddMemberResult.SELF;
+        }
+        members.computeIfAbsent(chunkId, ignored -> new HashSet<>()).add(memberId);
+        return AddMemberResult.SUCCESS;
+    }
+
+    public boolean isExplosionDamageEnabled() {
+        return explosionDamageEnabled;
+    }
+
+    public void setExplosionDamageEnabled(boolean explosionDamageEnabled) {
+        this.explosionDamageEnabled = explosionDamageEnabled;
     }
 }
